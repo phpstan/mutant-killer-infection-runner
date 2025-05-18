@@ -14,25 +14,27 @@ TL;DR:
 - This is currently much slower than running infection by itself.
   There are ideas/suggestions to improve this in the future.
 
+This plugin is a fork of excellent [Roave/infection-static-analysis-plugin](https://github.com/Roave/infection-static-analysis-plugin) and uses [PHPStan](https://phpstan.org/) instead of [Psalm](https://psalm.dev/).
+
 ## Usage
 
-The current design of this tool requires you to run `vendor/bin/roave-infection-static-analysis-plugin`
+The current design of this tool requires you to run `vendor/bin/phpstan-mutant-killer-infection-runner`
 instead of running `vendor/bin/infection`:
 
 ```sh
-composer require --dev roave/infection-static-analysis-plugin
+composer require --dev phpstan/mutant-killer-infection-runner
 
-vendor/bin/roave-infection-static-analysis-plugin
+vendor/bin/phpstan-mutant-killer-infection-runner
 ```
 
 ### Configuration
 
-The `roave-infection-static-analysis-plugin` binary accepts all of `infection` flags and arguments, and an additional `--psalm-config` argument.
+The `phpstan-mutant-killer-infection-runner` binary accepts all of `infection` flags and arguments, and an additional `--phpstan-config` argument.
 
-Using `--psalm-config`, you can specify the psalm configuration file to use when analysing the generated mutations:
+Using `--phpstan-config`, you can specify the [PHPStan configuration file](https://phpstan.org/config-reference) to use when analysing the generated mutations:
 
 ```sh
-vendor/bin/roave-infection-static-analysis-plugin --psalm-config config/psalm.xml
+vendor/bin/roave-infection-static-analysis-plugin --phpstan-config phpstan.neon
 ```
 
 ## Background
@@ -92,8 +94,7 @@ no longer a `list<T>`, but a map of `array<int|string, T>`, which is in conflict
 with what we declared.
 
 This plugin detects such mutations, and prevents them from making you write
-unnecessary tests, leveraging the full power of existing PHP type checkers
-such as [phpstan](https://github.com/phpstan/phpstan) and [psalm](https://github.com/vimeo/psalm).
+unnecessary tests, leveraging the full power of [PHPStan](https://phpstan.org/).
 
 ## Stability
 
@@ -107,8 +108,3 @@ greatest version of `infection/infection`, as we may still be catching up to it.
 
 Eventually, we will contribute patches to `infection/infection` so that there is a
 proper way to design and use plugins, without the need for dirty hacks.
-
-## PHPStan? Psalm? Where's my favourite static analysis tool?
-
-Our initial scope of work for `1.0.x` is to provide `vimeo/psalm` support as a start,
-while other static analysers will be included at a later point in time.
