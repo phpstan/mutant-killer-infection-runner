@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Class PHPStan\\InfectionStaticAnalysis\\RunStaticAnalysisAgainstEscapedMutant extends @final class Infection\\Mutant\\MutantExecutionResultFactory\.$#'
+			identifier: class.extendsFinalByPhpDoc
+			count: 1
+			path: src/InfectionStaticAnalysis/RunStaticAnalysisAgainstEscapedMutant.php

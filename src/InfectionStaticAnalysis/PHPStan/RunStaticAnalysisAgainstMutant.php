@@ -6,7 +6,6 @@ namespace PHPStan\InfectionStaticAnalysis\PHPStan;
 
 use Infection\Mutant\Mutant;
 use function array_key_exists;
-use function count;
 use function escapeshellarg;
 use function exec;
 use function implode;
@@ -19,8 +18,6 @@ use function json_decode;
  */
 class RunStaticAnalysisAgainstMutant
 {
-    private bool $alreadyVisitedStubs = false;
-
     public function __construct(
 		private readonly string $projectPath,
 		private readonly ?string $configuration,

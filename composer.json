@@ -20,6 +20,7 @@
         "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
         "composer-runtime-api": "^2.2",
         "infection/infection": "0.29.14",
+        "phpstan/phpstan": "^1.12.27 || ^2.1.17",
         "sanmai/later": "^0.1.7"
     },
     "conflict": {
@@ -49,5 +50,7 @@
             "php": "8.2.99"
         },
         "sort-packages": true
-    }
+    },
+	"minimum-stability": "dev",
+	"prefer-stable": true
 }

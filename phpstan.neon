@@ -1,0 +1,15 @@
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+	paths:
+		- src
+		- test
+	level: 8
+	ignoreErrors:
+		-
+			identifier: phpstanApi.method
+		-
+			identifier: phpstanApi.classConstant
+		-
+			identifier: phpstanApi.constructor
