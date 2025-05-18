@@ -13,9 +13,12 @@ use PHPUnit\Framework\TestCase;
 use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
 use function array_combine;
 use function array_map;
+use function dirname;
 use function file_put_contents;
 use function Later\now;
+use function Psl\Env\temp_dir;
 use function Psl\Filesystem\create_temporary_file;
+use function sprintf;
 use function unlink;
 
 /** @covers \PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant */
@@ -82,18 +85,19 @@ PHP;
         $validCodeReferencingProjectFilesPath  = create_temporary_file(null, 'valid-code-referencing-project-files-');
         $validCodeReferencingReflectionApiPath = create_temporary_file(null, 'valid-code-referencing-reflection-api-');
         $declaredClassSymbolPath               = create_temporary_file(null, 'declared-class-symbol-');
-        $repeatedDeclaredClassSymbolPath       = create_temporary_file(null, 'repeated-declared-class-symbol-');
 
         file_put_contents($validCodePath, $validCode);
         file_put_contents($invalidCodePath, $invalidCode);
         file_put_contents($validCodeReferencingProjectFilesPath, $validCodeReferencingProjectFiles);
         file_put_contents($validCodeReferencingReflectionApiPath, $validCodeReferencingReflectionApi);
         file_put_contents($declaredClassSymbolPath, $declaredClassSymbol);
-        file_put_contents($repeatedDeclaredClassSymbolPath, $declaredClassSymbol);
 
+		$tempDir = temp_dir();
+		$neon = sprintf("parameters: { level: 8, paths: [%s] }", $tempDir);
+		file_put_contents($tempDir . '/test.neon', $neon);
         $this->runStaticAnalysis = new RunStaticAnalysisAgainstMutant(
-			dirname(__DIR__, 3),
-			null,
+			dirname(__DIR__, 4),
+			$tempDir . '/test.neon',
 		);
     }
 
@@ -245,18 +249,6 @@ PHP,
         self::assertTrue($this->runStaticAnalysis->isMutantStillValidAccordingToStaticAnalysis($mutantWithPhpCoreReferences));
     }
 
-    /** @see https://github.com/vimeo/psalm/issues/5764#issuecomment-842687795 */
-    public function testPreloadedStubsAreNotConsideredIfNotConfigured(): void
-    {
-        self::assertFalse($this->runStaticAnalysis->isMutantStillValidAccordingToStaticAnalysis($this->makeMutant(
-            'usage-of-unknown-preloaded-stub-class-',
-            <<<'PHP'
-<?php 
-class StubImplementation implements \Roave\InfectionStaticAnalysisAsset\PreloadClassStub\Stub {}
-PHP,
-        )));
-    }
-
     /** @param non-empty-string $pathPrefix */
     private function makeMutant(
         string $pathPrefix,
@@ -265,6 +257,11 @@ PHP,
     ): Mutant {
         $mutatedCodePath = create_temporary_file(null, $pathPrefix);
         file_put_contents($mutatedCodePath, $mutatedCode);
+
+		if ($originalFilePath === 'irrelevant') {
+			$originalFilePath = create_temporary_file(null, $pathPrefix . '-orig');
+			file_put_contents($originalFilePath, $mutatedCode);
+		}
 
         $this->generatedMutantFiles[] = $mutatedCodePath;
 

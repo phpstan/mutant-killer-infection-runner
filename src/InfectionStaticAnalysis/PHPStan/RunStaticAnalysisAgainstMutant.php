@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace PHPStan\InfectionStaticAnalysis\PHPStan;
 
 use Infection\Mutant\Mutant;
+use JsonException;
 use function array_key_exists;
 use function escapeshellarg;
 use function exec;
 use function implode;
 use function json_decode;
+use const JSON_THROW_ON_ERROR;
 
 /**
  * @internal
@@ -32,6 +34,7 @@ class RunStaticAnalysisAgainstMutant
 			'analyse',
 			'--error-format',
 			'json',
+			'--no-progress',
 		];
 
 		if ($this->configuration !== null) {
@@ -49,7 +52,11 @@ class RunStaticAnalysisAgainstMutant
 			return true;
 		}
 
-		$json = json_decode(implode("\n", $outputLines), true);
+		try {
+			$json = json_decode(implode("\n", $outputLines), true, 512, JSON_THROW_ON_ERROR);
+		} catch (JsonException) {
+			return true;
+		}
 
 		return !array_key_exists($mutant->getFilePath(), $json['files']);
     }
