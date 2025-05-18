@@ -2,42 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Roave\InfectionStaticAnalysisTest\Psalm;
+namespace PHPStan\InfectionStaticAnalysisTest\PHPStan;
 
-use Composer\InstalledVersions;
 use Infection\Mutant\Mutant;
 use Infection\Mutation\Mutation;
 use Infection\Mutation\MutationAttributeKeys;
 use Infection\Mutator\Arithmetic\Plus;
 use Infection\PhpParser\MutatedNode;
 use PHPUnit\Framework\TestCase;
-use Psalm\Config;
-use Psalm\Internal\Analyzer\ProjectAnalyzer;
-use Psalm\Internal\IncludeCollector;
-use Psalm\Internal\Provider\FileProvider;
-use Psalm\Internal\Provider\Providers;
-use Psalm\Internal\RuntimeCaches;
-use Psalm\Report\ReportOptions;
-use Roave\InfectionStaticAnalysis\Psalm\RunStaticAnalysisAgainstMutant;
-
+use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
 use function array_combine;
 use function array_map;
-use function copy;
-use function define;
-use function defined;
 use function file_put_contents;
 use function Later\now;
-use function mkdir;
-use function Psl\Filesystem\canonicalize;
 use function Psl\Filesystem\create_temporary_file;
-use function Psl\Type\non_empty_string;
-use function rmdir;
 use function unlink;
 
-/** @covers \Roave\InfectionStaticAnalysis\Psalm\RunStaticAnalysisAgainstMutant */
+/** @covers \PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant */
 final class RunStaticAnalysisAgainstMutantTest extends TestCase
 {
-    private const PSALM_WORKING_DIRECTORY = __DIR__ . '/../../../../..';
     private RunStaticAnalysisAgainstMutant $runStaticAnalysis;
 
     /** @var list<string> */
@@ -108,28 +91,10 @@ PHP;
         file_put_contents($declaredClassSymbolPath, $declaredClassSymbol);
         file_put_contents($repeatedDeclaredClassSymbolPath, $declaredClassSymbol);
 
-        if (! defined('PSALM_VERSION')) {
-            define('PSALM_VERSION', InstalledVersions::getVersion('vimeo/psalm'));
-        }
-
-        if (! defined('PHP_PARSER_VERSION')) {
-            define('PHP_PARSER_VERSION', InstalledVersions::getVersion('nikic/php-parser'));
-        }
-
-        RuntimeCaches::clearAll();
-
-        $config = Config::getConfigForPath(
-            self::PSALM_WORKING_DIRECTORY,
-            self::PSALM_WORKING_DIRECTORY,
-        );
-
-        $config->setIncludeCollector(new IncludeCollector());
-
-        $this->runStaticAnalysis = new RunStaticAnalysisAgainstMutant(new ProjectAnalyzer(
-            $config,
-            new Providers(new FileProvider()),
-            new ReportOptions(),
-        ));
+        $this->runStaticAnalysis = new RunStaticAnalysisAgainstMutant(
+			dirname(__DIR__, 3),
+			null,
+		);
     }
 
     protected function tearDown(): void
@@ -225,44 +190,6 @@ PHP,
         );
     }
 
-    public function testWillConsiderMutantOfAlreadyReferencedScannedClassAsValid(): void
-    {
-        $usesSourceDeclaredClassSymbol       = $this->makeMutant(
-            'uses-source-declared-class-symbol-',
-            <<<'PHP'
-<?php
-
-function makeArrayFilter(): array {
-    return (new \Roave\InfectionStaticAnalysis\Stub\ArrayFilter())->makeAList(['a' => 'b']);
-}
-PHP,
-        );
-        $reDeclaresSourceDeclaredClassSymbol = $this->makeMutant(
-            're-declares-source-declared-class-symbol-',
-            <<<'PHP'
-<?php
-
-namespace Roave\InfectionStaticAnalysis\Stub;
-
-final class ArrayFilter {
-    function makeAList(): int { return 1; }
-}
-PHP,
-            non_empty_string()->assert(canonicalize(
-                __DIR__ . '/../../../../../src/Roave/InfectionStaticAnalysis/Stub/ArrayFilter.php',
-            )),
-        );
-
-        self::assertTrue(
-            $this->runStaticAnalysis->isMutantStillValidAccordingToStaticAnalysis($usesSourceDeclaredClassSymbol),
-            'Class symbol was seen for the first time in sources, through indirect scan',
-        );
-        self::assertTrue(
-            $this->runStaticAnalysis->isMutantStillValidAccordingToStaticAnalysis($reDeclaresSourceDeclaredClassSymbol),
-            'Class symbol re-declared by the mutant, which is an altered version of it',
-        );
-    }
-
     /** @see https://github.com/vimeo/psalm/issues/5764#issuecomment-841174672 */
     public function testInternalPhpEngineConstantsCanBeReferencedFromAnalyzedMutantCode(): void
     {
@@ -328,73 +255,6 @@ PHP,
 class StubImplementation implements \Roave\InfectionStaticAnalysisAsset\PreloadClassStub\Stub {}
 PHP,
         )));
-    }
-
-    /** @see https://github.com/vimeo/psalm/issues/5764#issuecomment-842687795 */
-    public function testConfiguredPreloadedStubsAreConsidered(): void
-    {
-        $config = Config::getConfigForPath(
-            __DIR__ . '/../../../../asset/PreloadClassStub',
-            __DIR__ . '/../../../../asset/PreloadClassStub',
-        );
-
-        $config->setIncludeCollector(new IncludeCollector());
-
-        $runStaticAnalysis = new RunStaticAnalysisAgainstMutant(new ProjectAnalyzer(
-            $config,
-            new Providers(new FileProvider()),
-            new ReportOptions(),
-        ));
-
-        self::assertTrue($runStaticAnalysis->isMutantStillValidAccordingToStaticAnalysis($this->makeMutant(
-            'usage-of-preloaded-stub-class-',
-            <<<'PHP'
-<?php 
-class StubImplementation implements \Roave\InfectionStaticAnalysisAsset\PreloadClassStub\Stub {}
-PHP,
-        )));
-    }
-
-    /** @see https://github.com/vimeo/psalm/issues/5764#issuecomment-842687795 */
-    public function testStubPreloadingHappensOnlyOnce(): void
-    {
-        $mutableProject = create_temporary_file(null, 'mutable-project-stub-');
-
-        unlink($mutableProject);
-        mkdir($mutableProject);
-        mkdir($mutableProject . '/vendor');
-        mkdir($mutableProject . '/vendor/composer');
-
-        copy(__DIR__ . '/../../../../asset/MutableProjectStub/psalm.xml', $mutableProject . '/psalm.xml');
-
-        $config = Config::getConfigForPath($mutableProject, $mutableProject);
-
-        $config->setIncludeCollector(new IncludeCollector());
-
-        $runStaticAnalysis = new RunStaticAnalysisAgainstMutant(new ProjectAnalyzer(
-            $config,
-            new Providers(new FileProvider()),
-            new ReportOptions(),
-        ));
-
-        $mutant = $this->makeMutant('usage-of-mutable-stub-class-', '<?php echo "hello";');
-
-        self::assertTrue($runStaticAnalysis->isMutantStillValidAccordingToStaticAnalysis($mutant));
-
-        // Modifying the project definitions that are stored on disk: this modified version should not
-        // be considered by psalm after the first analysis.
-        file_put_contents(
-            $mutableProject . '/vendor/composer/autoload_files.php',
-            '<?php throw new \Exception("Psalm should not be scanning this file location again");',
-        );
-
-        self::assertTrue($runStaticAnalysis->isMutantStillValidAccordingToStaticAnalysis($mutant));
-
-        unlink($mutableProject . '/vendor/composer/autoload_files.php');
-        unlink($mutableProject . '/psalm.xml');
-        rmdir($mutableProject . '/vendor/composer');
-        rmdir($mutableProject . '/vendor');
-        rmdir($mutableProject);
     }
 
     /** @param non-empty-string $pathPrefix */

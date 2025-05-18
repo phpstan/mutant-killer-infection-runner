@@ -1,5 +1,5 @@
 {
-    "name": "roave/infection-static-analysis-plugin",
+    "name": "phpstan/mutant-killer-infection-runner",
     "description": "Static analysis on top of mutation testing - prevents escaped mutants from being invalid according to static analysis",
     "type": "library",
     "license": "MIT",
@@ -7,10 +7,14 @@
         {
             "name": "Marco Pivetta",
             "email": "ocramius@gmail.com"
-        }
-    ],
+        },
+		{
+			"name": "PHPStan s.r.o.",
+			"email": "biz@phpstan.com"
+		}
+	],
     "bin": [
-        "bin/roave-infection-static-analysis-plugin"
+        "bin/phpstan-mutant-killer-infection-runner"
     ],
     "require": {
         "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
@@ -28,12 +32,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Roave\\InfectionStaticAnalysis\\": "src/Roave/InfectionStaticAnalysis"
+            "PHPStan\\InfectionStaticAnalysis\\": "src/InfectionStaticAnalysis"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Roave\\InfectionStaticAnalysisTest\\": "test/unit/Roave/InfectionStaticAnalysisTest"
+            "PHPStan\\InfectionStaticAnalysisTest\\": "test/unit/InfectionStaticAnalysisTest"
         }
     },
     "config": {

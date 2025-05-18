@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Roave\InfectionStaticAnalysisTest;
+namespace unit\InfectionStaticAnalysisTest;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Roave\InfectionStaticAnalysis\CliUtility;
+use PHPStan\InfectionStaticAnalysis\CliUtility;
 use RuntimeException;
-
 use function sprintf;
 
-/** @covers \Roave\InfectionStaticAnalysis\CliUtility */
+/** @covers \PHPStan\InfectionStaticAnalysis\CliUtility */
 final class CliUtilityTest extends TestCase
 {
     /**
@@ -47,63 +46,63 @@ final class CliUtilityTest extends TestCase
     {
         return [
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner'],
                 'configuration/psalm.xml',
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config', 'configuration/psalm.xml'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config', 'configuration/psalm.xml'],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner'],
                 'configuration/psalm.xml',
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config', '"configuration/psalm.xml"'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config', '"configuration/psalm.xml"'],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner'],
                 'configuration/psalm.xml',
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config="configuration/psalm.xml"'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config="configuration/psalm.xml"'],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner'],
                 'configuration/psalm.xml',
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config=configuration/psalm.xml"'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config=configuration/psalm.xml"'],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner'],
                 'configuration/psalm.xml',
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config="configuration/psalm.xml'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config="configuration/psalm.xml'],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner'],
                 'configuration/psalm.xml',
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config=configuration/psalm.xml'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config=configuration/psalm.xml'],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config=foo'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config=foo'],
                 'configuration/psalm.xml',
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config=configuration/psalm.xml', '--psalm-config=foo'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config=configuration/psalm.xml', '--psalm-config=foo'],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config=foo'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config=foo'],
                 'configuration/psalm.xml',
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config', 'configuration/psalm.xml', '--psalm-config=foo'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config', 'configuration/psalm.xml', '--psalm-config=foo'],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config', 'foo'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config', 'foo'],
                 'configuration/psalm.xml',
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config=configuration/psalm.xml', '--psalm-config', 'foo'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config=configuration/psalm.xml', '--psalm-config', 'foo'],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner'],
                 null,
-                ['vendor/bin/roave-infection-static-analysis-plugin'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner'],
                 'psalm-config',
             ],
             [
@@ -113,15 +112,15 @@ final class CliUtilityTest extends TestCase
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config', 'configuration/psalm.xml'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config', 'configuration/psalm.xml'],
                 null,
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config', 'configuration/psalm.xml'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config', 'configuration/psalm.xml'],
                 'psalm',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config', 'configuration/psalm.xml'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config', 'configuration/psalm.xml'],
                 null,
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config', 'configuration/psalm.xml'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config', 'configuration/psalm.xml'],
                 'psalm',
             ],
         ];
@@ -149,19 +148,19 @@ final class CliUtilityTest extends TestCase
     {
         return [
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config'],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config='],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config='],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config=""'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config=""'],
                 'psalm-config',
             ],
             [
-                ['vendor/bin/roave-infection-static-analysis-plugin', '--psalm-config="'],
+                ['vendor/bin/phpstan-mutant-killer-infection-runner', '--psalm-config="'],
                 'psalm-config',
             ],
         ];

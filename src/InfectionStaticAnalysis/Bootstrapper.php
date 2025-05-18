@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Roave\InfectionStaticAnalysis;
+namespace PHPStan\InfectionStaticAnalysis;
 
 use Infection\Container;
 use Infection\Mutant\MutantExecutionResultFactory;
 use ReflectionMethod;
-use Roave\InfectionStaticAnalysis\Psalm\RunStaticAnalysisAgainstMutant;
+use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
 
 /** @internal */
 final class Bootstrapper

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Roave\InfectionStaticAnalysisTest;
+namespace unit\InfectionStaticAnalysisTest;
 
 use Infection\Container;
+use PHPStan\InfectionStaticAnalysis\RunStaticAnalysisAgainstEscapedMutant;
 use PHPUnit\Framework\TestCase;
-use Roave\InfectionStaticAnalysis\Bootstrapper;
-use Roave\InfectionStaticAnalysis\Psalm\RunStaticAnalysisAgainstMutant;
-use Roave\InfectionStaticAnalysis\RunStaticAnalysisAgainstEscapedMutant;
+use PHPStan\InfectionStaticAnalysis\Bootstrapper;
+use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
 
 /**
- * @uses \Roave\InfectionStaticAnalysis\RunStaticAnalysisAgainstEscapedMutant
+ * @uses \PHPStan\InfectionStaticAnalysis\RunStaticAnalysisAgainstEscapedMutant
  *
- * @covers \Roave\InfectionStaticAnalysis\Bootstrapper
+ * @covers \PHPStan\InfectionStaticAnalysis\Bootstrapper
  */
 final class BootstrapperTest extends TestCase
 {

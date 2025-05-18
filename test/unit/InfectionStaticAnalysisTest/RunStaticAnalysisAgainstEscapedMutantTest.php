@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\InfectionStaticAnalysisTest;
+namespace unit\InfectionStaticAnalysisTest;
 
 use Infection\Mutant\DetectionStatus;
 use Infection\Mutant\Mutant;
@@ -17,15 +17,14 @@ use Infection\Process\MutantProcess;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
-use Roave\InfectionStaticAnalysis\Psalm\RunStaticAnalysisAgainstMutant;
-use Roave\InfectionStaticAnalysis\RunStaticAnalysisAgainstEscapedMutant;
+use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
+use PHPStan\InfectionStaticAnalysis\RunStaticAnalysisAgainstEscapedMutant;
 use Symfony\Component\Process\Process;
-
 use function array_combine;
 use function array_map;
 use function Later\now;
 
-/** @covers \Roave\InfectionStaticAnalysis\RunStaticAnalysisAgainstEscapedMutant */
+/** @covers \PHPStan\InfectionStaticAnalysis\RunStaticAnalysisAgainstEscapedMutant */
 final class RunStaticAnalysisAgainstEscapedMutantTest extends TestCase
 {
     private MutantProcess $process;

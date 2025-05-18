@@ -1,0 +1,52 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+namespace Roave\InfectionStaticAnalysis\Application;
+
+use Infection\Console\Application;
+use Infection\Container;
+use PHPStan\InfectionStaticAnalysis\Bootstrapper;
+use PHPStan\InfectionStaticAnalysis\CliUtility;
+use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
+use Symfony\Component\Console\Input\ArgvInput;
+use UnexpectedValueException;
+use function getcwd;
+use function sprintf;
+use function var_export;
+
+(static function (): void {
+    $projectPath = (static function () : string {
+        $projectDirectoryCandidates = [
+            'installed-as-composer-dependency' => __DIR__ . '/../../../..',
+            'installed-as-project'             => __DIR__ . '/..',
+            'current-working-directory'        => getcwd(),
+        ];
+
+        foreach ($projectDirectoryCandidates as $candidatePath) {
+            if (! file_exists($candidatePath . '/vendor/autoload.php')) {
+                continue;
+            }
+
+            return $candidatePath;
+        }
+
+        throw new UnexpectedValueException(sprintf(
+            'Could not identify project installation path within following paths: %s',
+            var_export($projectDirectoryCandidates, true)
+        ));
+    })();
+
+    require_once $projectPath . '/vendor/autoload.php';
+
+    /** @var list<non-empty-string> */
+    $arguments = $_SERVER['argv'] ?? [];
+    [$arguments, $configuration] = CliUtility::extractArgument($arguments, 'phpstan-config');
+
+    (new Application(Bootstrapper::bootstrap(
+        Container::create(),
+        new RunStaticAnalysisAgainstMutant($projectPath, $configuration),
+    )))
+        ->run(new ArgvInput($arguments));
+})();

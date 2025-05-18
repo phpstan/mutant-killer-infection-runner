@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Roave\InfectionStaticAnalysis;
+namespace PHPStan\InfectionStaticAnalysis;
 
 use RuntimeException;
-
 use function array_values;
 use function sprintf;
 use function str_starts_with;

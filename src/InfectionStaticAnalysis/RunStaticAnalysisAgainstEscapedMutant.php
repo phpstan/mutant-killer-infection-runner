@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Roave\InfectionStaticAnalysis;
+namespace PHPStan\InfectionStaticAnalysis;
 
 use Infection\Mutant\DetectionStatus;
 use Infection\Mutant\MutantExecutionResult;
 use Infection\Mutant\MutantExecutionResultFactory;
 use Infection\Process\MutantProcess;
 use ReflectionProperty;
-use Roave\InfectionStaticAnalysis\Psalm\RunStaticAnalysisAgainstMutant;
-
+use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
 use function assert;
 use function is_int;
 use function Later\later;

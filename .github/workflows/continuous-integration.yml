@@ -35,7 +35,7 @@ jobs:
         with:
           job: ${{ matrix.job }}
 
-  # we need to run `bin/roave-infection-static-analysis-plugin` as a manually configured
+  # we need to run `bin/phpstan-mutant-killer-infection-runner` as a manually configured
   # step here, since the tool is not in `composer.json` `require` for
   # `laminas/laminas-ci-matrix-action` to detect (it's the source repo, in fact).
   mutation-tests:
@@ -87,7 +87,7 @@ jobs:
         run: "composer install --no-interaction --no-progress"
 
       - name: "Infection"
-        run: "bin/roave-infection-static-analysis-plugin --threads=$(nproc)"
+        run: "bin/phpstan-mutant-killer-infection-runner --threads=$(nproc)"
         env:
           INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}

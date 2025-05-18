@@ -12,7 +12,7 @@
     <ini name="memory_limit" value="-1"/>
   </php>
   <testsuites>
-    <testsuite name="Roave\InfectionStaticAnalysis tests">
+    <testsuite name="PHPStan\InfectionStaticAnalysis tests">
       <directory>./test/unit</directory>
     </testsuite>
   </testsuites>
