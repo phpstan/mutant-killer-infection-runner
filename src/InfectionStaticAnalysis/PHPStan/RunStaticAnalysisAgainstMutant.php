@@ -79,7 +79,7 @@ class RunStaticAnalysisAgainstMutant
 				return true;
 			}
 
-			$elapsed = (int) round(microtime(true) - $nowTime);
+			$elapsed = (int) round(microtime(true) - $nowTime, 2);
 			$this->logger->debug(sprintf('PHPStan exited with code %d after running for %.2f s', $exitCode, $elapsed));
 
 			$this->logger->debug($stderr);
