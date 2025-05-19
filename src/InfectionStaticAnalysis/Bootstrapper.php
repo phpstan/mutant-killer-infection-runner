@@ -6,8 +6,8 @@ namespace PHPStan\InfectionStaticAnalysis;
 
 use Infection\Container;
 use Infection\Mutant\MutantExecutionResultFactory;
-use ReflectionMethod;
 use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
+use ReflectionMethod;
 
 /** @internal */
 final class Bootstrapper

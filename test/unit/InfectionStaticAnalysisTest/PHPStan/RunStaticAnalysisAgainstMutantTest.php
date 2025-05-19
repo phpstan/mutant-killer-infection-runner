@@ -9,17 +9,18 @@ use Infection\Mutation\Mutation;
 use Infection\Mutation\MutationAttributeKeys;
 use Infection\Mutator\Arithmetic\Plus;
 use Infection\PhpParser\MutatedNode;
-use PHPUnit\Framework\TestCase;
 use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+
 use function array_combine;
 use function array_map;
 use function dirname;
 use function file_put_contents;
 use function Later\now;
-use function Psl\Env\temp_dir;
-use function Psl\Filesystem\create_temporary_file;
+use function md5;
 use function sprintf;
+use function uniqid;
 use function unlink;
 
 /** @covers \PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant */
@@ -35,10 +36,10 @@ final class RunStaticAnalysisAgainstMutantTest extends TestCase
         parent::setUp();
 
         $this->runStaticAnalysis = new RunStaticAnalysisAgainstMutant(
-			new NullLogger(),
-			dirname(__DIR__, 4),
-			__DIR__ . '/project/phpstan.neon',
-		);
+            new NullLogger(),
+            dirname(__DIR__, 4),
+            __DIR__ . '/project/phpstan.neon',
+        );
     }
 
     protected function tearDown(): void
@@ -74,7 +75,7 @@ PHP,
     public function testWillConsiderMutantInvalidIfErrorsAreDetectedByStaticAnalysis(): void
     {
         self::assertFalse($this->runStaticAnalysis->isMutantStillValidAccordingToStaticAnalysis($this->makeMutant(
-			__DIR__ . '/project/src/validCode.php',
+            __DIR__ . '/project/src/validCode.php',
             <<<'PHP'
 <?php
 

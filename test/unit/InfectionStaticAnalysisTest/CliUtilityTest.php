@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace unit\InfectionStaticAnalysisTest;
 
+use PHPStan\InfectionStaticAnalysis\CliUtility;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use PHPStan\InfectionStaticAnalysis\CliUtility;
 use RuntimeException;
+
 use function sprintf;
 
 /** @covers \PHPStan\InfectionStaticAnalysis\CliUtility */

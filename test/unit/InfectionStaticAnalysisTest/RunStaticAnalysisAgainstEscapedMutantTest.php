@@ -14,12 +14,13 @@ use Infection\Mutator\Arithmetic\AssignmentEqual;
 use Infection\Mutator\Arithmetic\Plus;
 use Infection\PhpParser\MutatedNode;
 use Infection\Process\MutantProcess;
+use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
+use PHPStan\InfectionStaticAnalysis\RunStaticAnalysisAgainstEscapedMutant;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
-use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
-use PHPStan\InfectionStaticAnalysis\RunStaticAnalysisAgainstEscapedMutant;
 use Symfony\Component\Process\Process;
+
 use function array_combine;
 use function array_map;
 use function Later\now;

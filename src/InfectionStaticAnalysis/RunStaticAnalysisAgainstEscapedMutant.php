@@ -8,8 +8,9 @@ use Infection\Mutant\DetectionStatus;
 use Infection\Mutant\MutantExecutionResult;
 use Infection\Mutant\MutantExecutionResultFactory;
 use Infection\Process\MutantProcess;
-use ReflectionProperty;
 use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
+use ReflectionProperty;
+
 use function assert;
 use function is_int;
 use function Later\later;
