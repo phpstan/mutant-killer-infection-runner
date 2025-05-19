@@ -70,12 +70,21 @@ class RunStaticAnalysisAgainstMutant
 
 			$exitCode = proc_close($process);
 
+			if ($stdout === false) {
+				$this->logger->error('Could not read stdout');
+				return true;
+			}
+			if ($stderr === false) {
+				$this->logger->error('Could not read stderr');
+				return true;
+			}
+
 			$elapsed = (int) round(microtime(true) - $nowTime);
 			$this->logger->debug(sprintf('PHPStan exited with code %d after running for %.2f s', $exitCode, $elapsed));
 
 			$this->logger->debug($stderr);
 		} else {
-			$this->logger->debug('Could not run PHPStan');
+			$this->logger->error('Could not run PHPStan');
 			return true;
 		}
 
@@ -86,7 +95,7 @@ class RunStaticAnalysisAgainstMutant
 		try {
 			$json = json_decode($stdout, true, 512, JSON_THROW_ON_ERROR);
 		} catch (JsonException) {
-			$this->logger->debug(sprintf('Could not decode PHPStan JSON output: %s', $stdout));
+			$this->logger->error(sprintf('Could not decode PHPStan JSON output: %s', $stdout));
 			return true;
 		}
 

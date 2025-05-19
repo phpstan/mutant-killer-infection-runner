@@ -105,7 +105,6 @@ PHP,
         )));
     }
 
-    /** @param non-empty-string $pathPrefix */
     private function makeMutant(
         string $originalFilePath,
         string $mutatedCode,
