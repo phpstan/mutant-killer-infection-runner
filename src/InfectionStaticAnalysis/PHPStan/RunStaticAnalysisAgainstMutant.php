@@ -47,17 +47,34 @@ class RunStaticAnalysisAgainstMutant
 		$commandsParts[] = '--instead-of';
 		$commandsParts[] = escapeshellarg($mutant->getMutation()->getOriginalFilePath());
 
-		exec(implode(' ', $commandsParts), $outputLines, $exitCode);
+		$descriptorspec = [
+			1 => ['pipe', 'w'], // stdout
+			2 => ['pipe', 'w'], // stderr
+		];
+
+		$process = proc_open(implode(' ', $commandsParts), $descriptorspec, $pipes);
+		if (is_resource($process)) {
+			$stdout = stream_get_contents($pipes[1]);
+			fclose($pipes[1]);
+
+			$stderr = stream_get_contents($pipes[2]);
+			fclose($pipes[2]);
+
+			$exitCode = proc_close($process);
+		} else {
+			return true;
+		}
+
 		if ($exitCode === 0) {
 			return true;
 		}
 
 		try {
-			$json = json_decode(implode("\n", $outputLines), true, 512, JSON_THROW_ON_ERROR);
+			$json = json_decode($stdout, true, 512, JSON_THROW_ON_ERROR);
 		} catch (JsonException) {
 			return true;
 		}
 
-		return !array_key_exists($mutant->getFilePath(), $json['files']);
+		return $json['totals']['file_errors'] === 0;
     }
 }
