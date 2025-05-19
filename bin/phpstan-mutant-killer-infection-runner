@@ -7,9 +7,12 @@ namespace Roave\InfectionStaticAnalysis\Application;
 
 use Infection\Console\Application;
 use Infection\Container;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
 use PHPStan\InfectionStaticAnalysis\Bootstrapper;
 use PHPStan\InfectionStaticAnalysis\CliUtility;
 use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
+use Psr\Log\NullLogger;
 use Symfony\Component\Console\Input\ArgvInput;
 use UnexpectedValueException;
 use function getcwd;
@@ -43,10 +46,16 @@ use function var_export;
     /** @var list<non-empty-string> */
     $arguments = $_SERVER['argv'] ?? [];
     [$arguments, $configuration] = CliUtility::extractArgument($arguments, 'phpstan-config');
+	[$arguments, $log] = CliUtility::extractArgument($arguments, 'log');
+
+	$logger = new NullLogger();
+	if ($log !== null) {
+		$logger = new StreamHandler($log, Level::Debug);
+	}
 
     (new Application(Bootstrapper::bootstrap(
         Container::create(),
-        new RunStaticAnalysisAgainstMutant($projectPath, $configuration),
+        new RunStaticAnalysisAgainstMutant($logger, $projectPath, $configuration),
     )))
         ->run(new ArgvInput($arguments));
 })();

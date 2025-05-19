@@ -11,6 +11,7 @@ use Infection\Mutator\Arithmetic\Plus;
 use Infection\PhpParser\MutatedNode;
 use PHPUnit\Framework\TestCase;
 use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
+use Psr\Log\NullLogger;
 use function array_combine;
 use function array_map;
 use function dirname;
@@ -96,6 +97,7 @@ PHP;
 		$neon = sprintf("parameters: { level: 8, paths: [%s] }", $tempDir);
 		file_put_contents($tempDir . '/test.neon', $neon);
         $this->runStaticAnalysis = new RunStaticAnalysisAgainstMutant(
+			new NullLogger(),
 			dirname(__DIR__, 4),
 			$tempDir . '/test.neon',
 		);

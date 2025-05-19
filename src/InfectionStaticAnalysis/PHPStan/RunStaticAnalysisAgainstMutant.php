@@ -6,12 +6,16 @@ namespace PHPStan\InfectionStaticAnalysis\PHPStan;
 
 use Infection\Mutant\Mutant;
 use JsonException;
-use function array_key_exists;
+use Psr\Log\LoggerInterface;
 use function escapeshellarg;
-use function exec;
 use function implode;
 use function json_decode;
+use function json_encode;
+use function microtime;
+use function sprintf;
+use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
+use const JSON_UNESCAPED_UNICODE;
 
 /**
  * @internal
@@ -21,6 +25,7 @@ use const JSON_THROW_ON_ERROR;
 class RunStaticAnalysisAgainstMutant
 {
     public function __construct(
+		private readonly LoggerInterface $logger,
 		private readonly string $projectPath,
 		private readonly ?string $configuration,
 	)
@@ -29,6 +34,7 @@ class RunStaticAnalysisAgainstMutant
 
     public function isMutantStillValidAccordingToStaticAnalysis(Mutant $mutant): bool
     {
+		$this->logger->debug(sprintf("Mutating file %s:\n\n%s\n", $mutant->getMutation()->getOriginalFilePath(), $mutant->getDiff()->get()));
 		$commandsParts = [
 			$this->projectPath . '/vendor/bin/phpstan',
 			'analyse',
@@ -52,6 +58,8 @@ class RunStaticAnalysisAgainstMutant
 			2 => ['pipe', 'w'], // stderr
 		];
 
+		$nowTime = microtime(true);
+		$this->logger->debug('Running PHPStan...');
 		$process = proc_open(implode(' ', $commandsParts), $descriptorspec, $pipes);
 		if (is_resource($process)) {
 			$stdout = stream_get_contents($pipes[1]);
@@ -61,7 +69,13 @@ class RunStaticAnalysisAgainstMutant
 			fclose($pipes[2]);
 
 			$exitCode = proc_close($process);
+
+			$elapsed = (int) round(microtime(true) - $nowTime);
+			$this->logger->debug(sprintf('PHPStan exited with code %d after running for %.2f s', $exitCode, $elapsed));
+
+			$this->logger->debug($stderr);
 		} else {
+			$this->logger->debug('Could not run PHPStan');
 			return true;
 		}
 
@@ -72,9 +86,17 @@ class RunStaticAnalysisAgainstMutant
 		try {
 			$json = json_decode($stdout, true, 512, JSON_THROW_ON_ERROR);
 		} catch (JsonException) {
+			$this->logger->debug(sprintf('Could not decode PHPStan JSON output: %s', $stdout));
 			return true;
 		}
 
-		return $json['totals']['file_errors'] === 0;
+		if ($json['totals']['file_errors'] === 0) {
+			$this->logger->debug('Valid mutant: no file errors');
+			return true;
+		}
+
+		$this->logger->debug(sprintf('Mutant killed: %s', json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)));
+
+		return false;
     }
 }
