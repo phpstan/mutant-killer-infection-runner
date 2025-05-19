@@ -1051,12 +1051,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "ba375ba2e5531f0e24eb342bb1bdfa45fffce837"
+                "reference": "e5a176afeb3d672fee1c4f9ca3e9a9f037864064"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ba375ba2e5531f0e24eb342bb1bdfa45fffce837",
-                "reference": "ba375ba2e5531f0e24eb342bb1bdfa45fffce837",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e5a176afeb3d672fee1c4f9ca3e9a9f037864064",
+                "reference": "e5a176afeb3d672fee1c4f9ca3e9a9f037864064",
                 "shasum": ""
             },
             "require": {
@@ -1102,7 +1102,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-18T19:47:34+00:00"
+            "time": "2025-05-19T08:41:13+00:00"
         },
         {
             "name": "psr/container",
@@ -4492,14 +4492,14 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
         "composer-runtime-api": "^2.2"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.2.99"
     },
