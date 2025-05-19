@@ -50,6 +50,7 @@ class RunStaticAnalysisAgainstMutant
             '--error-format',
             'json',
             '--no-progress',
+			'-vv',
         ];
 
         if ($this->configuration !== null) {
