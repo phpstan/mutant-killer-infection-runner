@@ -7,6 +7,7 @@ namespace Roave\InfectionStaticAnalysis\Application;
 
 use Infection\Console\Application;
 use Infection\Container;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
@@ -51,7 +52,10 @@ use function var_export;
 
 	$logger = new NullLogger();
 	if ($log !== null) {
-		$logger = new Logger('logger', [new StreamHandler($log, Level::Debug)]);
+		$handler = new StreamHandler($log, Level::Debug);
+		$formatter = new LineFormatter(null, null, true, true);
+		$handler->setFormatter($formatter);
+		$logger = new Logger('logger', [$handler]);
 	}
 
     (new Application(Bootstrapper::bootstrap(
