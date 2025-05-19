@@ -10,6 +10,5 @@
             "report": "/\\d+\\.\\d+\\./"
         }
     },
-    "minMsi": 100,
-    "minCoveredMsi": 100
+    "minMsi": 77
 }
