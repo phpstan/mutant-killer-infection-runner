@@ -24,6 +24,9 @@ use const JSON_UNESCAPED_UNICODE;
  */
 class RunStaticAnalysisAgainstMutant
 {
+
+	private static int $run = 0;
+
     public function __construct(
 		private readonly LoggerInterface $logger,
 		private readonly string $projectPath,
@@ -59,7 +62,9 @@ class RunStaticAnalysisAgainstMutant
 		];
 
 		$nowTime = microtime(true);
-		$this->logger->debug('Running PHPStan...');
+
+		self::$run++;
+		$this->logger->debug(sprintf('Running PHPStan - run #%d', self::$run));
 		$process = proc_open(implode(' ', $commandsParts), $descriptorspec, $pipes);
 		if (is_resource($process)) {
 			$stdout = stream_get_contents($pipes[1]);
