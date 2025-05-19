@@ -9,6 +9,7 @@ use Infection\Console\Application;
 use Infection\Container;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
+use Monolog\Logger;
 use PHPStan\InfectionStaticAnalysis\Bootstrapper;
 use PHPStan\InfectionStaticAnalysis\CliUtility;
 use PHPStan\InfectionStaticAnalysis\PHPStan\RunStaticAnalysisAgainstMutant;
@@ -50,7 +51,7 @@ use function var_export;
 
 	$logger = new NullLogger();
 	if ($log !== null) {
-		$logger = new StreamHandler($log, Level::Debug);
+		$logger = new Logger('logger', [new StreamHandler($log, Level::Debug)]);
 	}
 
     (new Application(Bootstrapper::bootstrap(
